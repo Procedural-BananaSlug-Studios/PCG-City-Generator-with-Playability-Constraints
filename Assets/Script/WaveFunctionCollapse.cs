@@ -207,7 +207,6 @@ public class WaveFunctionCollapse : MonoBehaviour
                     }
                 }
             }
->>>>>>> 134b11b909e5b13156bc9bc6ea5c53f1e9f7c38e
         }
 
         gridComponents = newGenerationCell;
