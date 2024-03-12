@@ -13,29 +13,24 @@ public class WaveFunctionCollapse : MonoBehaviour
     public Tile backupTile;
     private int iterations;
 
-
-
     private void Awake(){
         gridComponents = new List<Cell>();
         InitializeGrid();
-
-
     }
 
+    // Initializes the grid
     void InitializeGrid(){
         for (int x = 0; x < dimensions; x++){
             for (int y = 0; y < dimensions; y++){
                 Cell newCell = Instantiate(cellObj, new Vector3(x, 0, y), Quaternion.identity);
                 newCell.CreateCell(false, tileObjects);
                 gridComponents.Add(newCell);            
-            
             }
-        
         }
         StartCoroutine(CheckEntropy());
     }
 
-
+    // Checks list and organizes it so that first element is the one with the least amount of options
     IEnumerator CheckEntropy(){
         List<Cell> tempGrid = new List<Cell>(gridComponents);
         tempGrid.RemoveAll(c => c.collapsed);
@@ -46,6 +41,7 @@ public class WaveFunctionCollapse : MonoBehaviour
         CollapseCell(tempGrid);
     }
 
+    // Collapses a cell and updates the grid
     void CollapseCell(List<Cell> tempGrid){
         int randIndex = UnityEngine.Random.Range(0, tempGrid.Count);
         Cell cellToCollapse = tempGrid[randIndex];
@@ -63,10 +59,9 @@ public class WaveFunctionCollapse : MonoBehaviour
         Tile foundTile = cellToCollapse.tileOptions[0];
         Instantiate(foundTile, cellToCollapse.transform.position, foundTile.transform.rotation);
         UpdateGeneration();
-
-
     }
 
+    // Updates the grid with the new generation
     void UpdateGeneration(){
         List<Cell> newGenerationCell = new List<Cell>(gridComponents);
         for (int x = 0; x < dimensions; x++){
@@ -81,6 +76,7 @@ public class WaveFunctionCollapse : MonoBehaviour
                         options.Add(t);
                     }
 
+                    // Check left neighbour
                     if (x > 0){
                         Cell up = gridComponents[y + (x -1) * dimensions];
                         List<Tile> validOptions = new List<Tile>();
@@ -93,6 +89,7 @@ public class WaveFunctionCollapse : MonoBehaviour
                         CheckValidity(options, validOptions);
                     }
 
+                    // Check up neighbour
                     if (y < dimensions - 1){
                         Cell left = gridComponents[y + 1 + x * dimensions];
                         List<Tile> validOptions = new List<Tile>();
@@ -105,7 +102,7 @@ public class WaveFunctionCollapse : MonoBehaviour
                         CheckValidity(options, validOptions);
                     }
 
-
+                    // Check down neighbour
                     if (x < dimensions - 1){
                         Cell down = gridComponents[y + (x+1) * dimensions];
                         List<Tile> validOptions = new List<Tile>();
@@ -118,6 +115,7 @@ public class WaveFunctionCollapse : MonoBehaviour
                         CheckValidity(options, validOptions);
                     }
 
+                    // Check right neighbour
                     if (y > 0){
                         Cell right = gridComponents[y - 1 + x * dimensions];
                         List<Tile> validOptions = new List<Tile>();
@@ -130,28 +128,23 @@ public class WaveFunctionCollapse : MonoBehaviour
                         CheckValidity(options, validOptions);
                     }
 
+                    // Recreate the cell
                     Tile[] newTileList = new Tile[options.Count];
                     for (int i = 0; i < options.Count; i++){
                         newTileList[i] = options[i];
                     }
                     newGenerationCell[index].RecreateCell(newTileList);
-
-
-                    
                 }
-
-
             }
         }
-
+        // Update the grid
         gridComponents = newGenerationCell;
         if (iterations < dimensions * dimensions){
-        
             StartCoroutine(CheckEntropy());
         }
-
     }
 
+    // Checks if the options are valid
     void CheckValidity(List<Tile> optionList, List<Tile> validOption){
         for (int x = optionList.Count - 1; x >= 0; x--){
             var element = optionList[x];
@@ -159,10 +152,6 @@ public class WaveFunctionCollapse : MonoBehaviour
                 optionList.RemoveAt(x);
             }
         }
-
-
     }
-
-
 
 }
