@@ -9,5 +9,11 @@ public class Tile : MonoBehaviour
     public Tile[] downNeighbour;
     public Tile[] leftNeighbour;
     public Tile[] rightNeighbour;
+
+    public Tile[] frontNeighbour;
+    public Tile[] backNeighbour;
+
     
+
+
 }
